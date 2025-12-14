@@ -1,21 +1,37 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { FilterControls } from '../components/Filters/FilterControls';
 import { GenAIAdoptionChart } from '../components/Charts/GenAIAdoptionChart';
 import { AWSUsageHeatmap } from '../components/Charts/AWSUsageHeatmap';
 import { CorrelationPanel } from '../components/Charts/CorrelationPanel';
 import { InsightsPanel } from '../components/Charts/InsightsPanel';
+import { KPIStrip } from '../components/KPI/KPIStrip';
+import { InsightsComposer } from '../components/Insights/InsightsComposer';
+import { IndustryProfileDrawer } from '../components/Insights/IndustryProfileDrawer';
+import { ScenarioSimulator } from '../components/Insights/ScenarioSimulator';
 import { useFilters } from '../contexts/FilterContext';
 
 export const Dashboard: React.FC = () => {
   const { clearFilters } = useFilters();
   const [, setSearchParams] = useSearchParams();
+  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Clear any existing filters and URL parameters on component mount
   useEffect(() => {
     clearFilters();
     setSearchParams({}, { replace: true });
   }, [clearFilters, setSearchParams]);
+
+  const handleIndustryClick = (industry: string) => {
+    setSelectedIndustry(industry);
+    setIsDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setIsDrawerOpen(false);
+    setSelectedIndustry(null);
+  };
 
   return (
     <div className="space-y-6">
@@ -29,31 +45,47 @@ export const Dashboard: React.FC = () => {
         </p>
       </div>
 
+      {/* KPI Strip */}
+      <KPIStrip />
+
       {/* Filter Controls */}
       <FilterControls />
 
       {/* Main Dashboard Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* GenAI Adoption Chart */}
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - Charts */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* GenAI Adoption Chart */}
           <GenAIAdoptionChart />
-        </div>
 
-        {/* AWS Usage Heatmap */}
-        <div className="lg:col-span-2">
+          {/* AWS Usage Heatmap */}
           <AWSUsageHeatmap />
-        </div>
 
-        {/* Correlation Panel */}
-        <div>
+          {/* Correlation Panel */}
           <CorrelationPanel />
         </div>
 
-        {/* Insights Panel */}
-        <div>
+        {/* Right Column - Insights */}
+        <div className="space-y-6">
+          {/* Insights Composer */}
+          <InsightsComposer />
+
+          {/* Original Insights Panel */}
           <InsightsPanel />
         </div>
       </div>
+
+      {/* Scenario Simulator */}
+      <div className="mt-6">
+        <ScenarioSimulator />
+      </div>
+
+      {/* Industry Profile Drawer */}
+      <IndustryProfileDrawer
+        industry={selectedIndustry}
+        isOpen={isDrawerOpen}
+        onClose={closeDrawer}
+      />
     </div>
   );
 };

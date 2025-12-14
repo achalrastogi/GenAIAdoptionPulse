@@ -228,6 +228,34 @@ class APIClient {
     return response.data;
   }
 
+  // KPI API
+  async getKPIs(filters?: {
+    year?: number;
+    industry?: string;
+  }): Promise<any> {
+    const response = await retryRequest(() =>
+      this.client.get('/kpis', {
+        params: filters,
+      })
+    );
+    return response.data.data; // Extract the data field from the response
+  }
+
+  // Enhanced Insights API
+  async getEnhancedInsights(filters?: {
+    years?: number[];
+    industries?: string[];
+  }): Promise<any> {
+    const params: Record<string, string> = {};
+    if (filters?.years?.length) params.years = filters.years.join(',');
+    if (filters?.industries?.length) params.industries = filters.industries.join(',');
+    
+    const response = await retryRequest(() =>
+      this.client.get('/insights', { params })
+    );
+    return response.data;
+  }
+
   // Health check
   async healthCheck(): Promise<{ status: string }> {
     const response = await this.client.get<{ status: string }>('/health');

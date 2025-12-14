@@ -198,6 +198,7 @@ export const AWSUsageHeatmap: React.FC<AWSUsageHeatmapProps> = ({
                       `}
                       style={{ backgroundColor: getColorIntensity(value) }}
                       title={`${industry} - ${service.name}: ${cell?.displayValue || '0%'}`}
+                      data-tooltip={`${industry} uses ${service.name} at ${cell?.displayValue || '0%'} capacity. Click for detailed breakdown.`}
                     >
                       {cell?.displayValue || '0%'}
                     </div>
@@ -206,6 +207,37 @@ export const AWSUsageHeatmap: React.FC<AWSUsageHeatmapProps> = ({
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Export Controls */}
+        <div className="flex justify-end space-x-2 mt-4">
+          <button
+            onClick={() => {
+              // Export as PNG (simplified - would need html2canvas in real implementation)
+              console.log('Exporting heatmap as PNG...');
+            }}
+            className="px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            📷 PNG
+          </button>
+          <button
+            onClick={() => {
+              // Export as CSV
+              const csvContent = "data:text/csv;charset=utf-8," + 
+                "Industry,Service,Usage\n" +
+                heatmapData.map(cell => `${cell.industry},${cell.service},${cell.value}`).join('\n');
+              const encodedUri = encodeURI(csvContent);
+              const link = document.createElement("a");
+              link.setAttribute("href", encodedUri);
+              link.setAttribute("download", "aws_usage_heatmap.csv");
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }}
+            className="px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            📊 CSV
+          </button>
         </div>
 
         {/* Summary Statistics */}
