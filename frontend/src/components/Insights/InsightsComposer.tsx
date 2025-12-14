@@ -20,9 +20,21 @@ interface InsightCardProps {
 
 const InsightCard: React.FC<InsightCardProps> = ({ insight, isExpanded, onToggle }) => {
   const getConfidenceBadge = (confidence: number) => {
-    if (confidence >= 0.8) return { label: 'High', color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' };
-    if (confidence >= 0.5) return { label: 'Medium', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' };
-    return { label: 'Low', color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' };
+    if (confidence >= 0.8) return { 
+      label: 'High Confidence', 
+      color: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+      indicator: 'bg-green-500'
+    };
+    if (confidence >= 0.5) return { 
+      label: 'Medium Confidence', 
+      color: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+      indicator: 'bg-yellow-500'
+    };
+    return { 
+      label: 'Low Confidence', 
+      color: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+      indicator: 'bg-red-500'
+    };
   };
 
   const confidenceBadge = getConfidenceBadge(insight.confidence);
@@ -34,42 +46,45 @@ const InsightCard: React.FC<InsightCardProps> = ({ insight, isExpanded, onToggle
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-4">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 mb-6 hover:border-gray-200 dark:hover:border-gray-600 transition-all duration-300 hover:shadow-sm">
       <div 
-        className="p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        className="p-6 cursor-pointer"
         onClick={onToggle}
       >
         <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center space-x-2 mb-2">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="flex-1 pr-4">
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white leading-tight">
                 {insight.title}
               </h3>
-              <span className={`px-2 py-1 text-xs font-medium rounded-full ${confidenceBadge.color}`}>
-                {confidenceBadge.label}
-              </span>
+              <div className="flex items-center space-x-2 ml-4">
+                <div className={`w-2 h-2 rounded-full ${confidenceBadge.indicator}`}></div>
+                <span className={`px-3 py-1 text-xs font-medium rounded-full ${confidenceBadge.color}`}>
+                  {confidenceBadge.label}
+                </span>
+              </div>
             </div>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
+            <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed">
               {insight.short_text}
             </p>
           </div>
-          <div className="ml-4">
-            <span className="text-gray-400 dark:text-gray-500">
-              {isExpanded ? '▼' : '▶'}
+          <div className="ml-2 mt-1">
+            <span className="text-gray-300 dark:text-gray-600 text-sm">
+              {isExpanded ? '−' : '+'}
             </span>
           </div>
         </div>
       </div>
 
       {isExpanded && (
-        <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="pt-4 space-y-4">
+        <div className="px-6 pb-6 border-t border-gray-100 dark:border-gray-700">
+          <div className="pt-6 space-y-6">
             {/* Detailed Description */}
             <div>
-              <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
-                Detailed Analysis
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 uppercase tracking-wide">
+                Analysis
               </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                 {insight.details}
               </p>
             </div>

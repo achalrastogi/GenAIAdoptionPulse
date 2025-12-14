@@ -7,7 +7,8 @@ interface CardProps {
   title?: string;
   subtitle?: string;
   padding?: 'sm' | 'md' | 'lg';
-  shadow?: 'none' | 'sm' | 'md' | 'lg';
+  elevation?: 'none' | 'base' | 'elevated' | 'floating';
+  variant?: 'default' | 'insights' | 'chart' | 'kpi';
 }
 
 export const Card: React.FC<CardProps> = ({ 
@@ -16,7 +17,8 @@ export const Card: React.FC<CardProps> = ({
   title,
   subtitle,
   padding = 'md',
-  shadow = 'sm'
+  elevation = 'base',
+  variant = 'default'
 }) => {
   const paddingClasses = {
     sm: 'p-4',
@@ -24,29 +26,38 @@ export const Card: React.FC<CardProps> = ({
     lg: 'p-8'
   };
 
-  const shadowClasses = {
+  const elevationClasses = {
     none: '',
-    sm: 'shadow-sm',
-    md: 'shadow-md',
-    lg: 'shadow-lg'
+    base: 'card-base',
+    elevated: 'card-elevated',
+    floating: 'card-base hover:shadow-2xl'
+  };
+
+  const variantClasses = {
+    default: 'card-base',
+    insights: 'insight-card',
+    chart: 'chart-container',
+    kpi: 'kpi-card'
   };
 
   return (
     <div className={clsx(
-      'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700',
-      shadowClasses[shadow],
+      // Use enhanced card classes from design system
+      variant !== 'default' ? variantClasses[variant] : elevationClasses[elevation],
       paddingClasses[padding],
+      // Remove old styling, rely on CSS custom properties
+      'rounded-xl transition-all duration-200',
       className
     )}>
       {(title || subtitle) && (
-        <div className="mb-4">
+        <div className="mb-6">
           {title && (
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h3 className="text-xl font-semibold text-primary tracking-tight">
               {title}
             </h3>
           )}
           {subtitle && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-sm text-secondary mt-2 font-medium">
               {subtitle}
             </p>
           )}

@@ -60,16 +60,36 @@ export const AWSUsageHeatmap: React.FC<AWSUsageHeatmapProps> = ({
     return Array.from(new Set(rawData.map(record => record.industry)));
   }, [rawData]);
 
-  // Get color intensity based on value
+  // Enhanced color intensity with refined gradient scale
   const getColorIntensity = (value: number): string => {
     const intensity = Math.min(value, 1); // Clamp to 1
-    const opacity = 0.1 + (intensity * 0.8); // Range from 0.1 to 0.9
-    return `rgba(59, 130, 246, ${opacity})`; // Blue with varying opacity
+    
+    if (intensity <= 0.2) {
+      // Low: Light neutral
+      return 'var(--color-heatmap-low)';
+    } else if (intensity <= 0.6) {
+      // Medium: Desaturated blue
+      return 'var(--color-heatmap-medium)';
+    } else {
+      // High: Accent indigo
+      return 'var(--color-heatmap-high)';
+    }
   };
 
-  // Get text color based on background intensity
+  // Enhanced text color based on background intensity
   const getTextColor = (value: number): string => {
-    return value > 0.6 ? 'text-white' : 'text-gray-900 dark:text-gray-100';
+    const intensity = Math.min(value, 1);
+    
+    if (intensity > 0.6) {
+      // High intensity: Use white text for contrast
+      return 'text-white font-semibold';
+    } else if (intensity > 0.2) {
+      // Medium intensity: Use primary text
+      return 'text-primary font-medium';
+    } else {
+      // Low intensity: Use secondary text
+      return 'text-secondary';
+    }
   };
 
   // Loading state
@@ -134,24 +154,25 @@ export const AWSUsageHeatmap: React.FC<AWSUsageHeatmapProps> = ({
     <Card 
       title="AWS Service Usage Heatmap"
       subtitle={`Service utilization across ${industries.length} industries`}
+      variant="chart"
       className={className}
     >
       <div className="space-y-4">
-        {/* Legend */}
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600 dark:text-gray-400">Usage Intensity</span>
-          <div className="flex items-center space-x-2">
-            <span className="text-xs text-gray-500">Low</span>
+        {/* Enhanced Legend */}
+        <div className="flex items-center justify-between text-sm p-4 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 rounded-lg border border-accent-muted/10">
+          <span className="text-secondary font-medium">Usage Intensity</span>
+          <div className="flex items-center space-x-3">
+            <span className="text-xs text-tertiary">Low</span>
             <div className="flex space-x-1">
-              {[0.2, 0.4, 0.6, 0.8, 1.0].map((intensity) => (
+              {[0.1, 0.3, 0.5, 0.7, 0.9].map((intensity) => (
                 <div
                   key={intensity}
-                  className="w-4 h-4 rounded"
+                  className="w-5 h-5 rounded-md border border-accent-muted/20 shadow-sm"
                   style={{ backgroundColor: getColorIntensity(intensity) }}
                 />
               ))}
             </div>
-            <span className="text-xs text-gray-500">High</span>
+            <span className="text-xs text-tertiary">High</span>
           </div>
         </div>
 
@@ -159,14 +180,14 @@ export const AWSUsageHeatmap: React.FC<AWSUsageHeatmapProps> = ({
         <div className="overflow-x-auto">
           <div className="min-w-full">
             {/* Header row with service names */}
-            <div className="grid grid-cols-6 gap-1 mb-2">
-              <div className="text-xs font-medium text-gray-600 dark:text-gray-400 p-2">
+            <div className="grid grid-cols-6 gap-2 mb-4">
+              <div className="text-xs font-medium text-gray-500 dark:text-gray-400 p-3">
                 Industry
               </div>
               {AWS_SERVICES.map((service) => (
                 <div
                   key={service.key}
-                  className="text-xs font-medium text-gray-600 dark:text-gray-400 p-2 text-center"
+                  className="text-xs font-medium text-gray-500 dark:text-gray-400 p-3 text-center"
                 >
                   {service.name}
                 </div>
@@ -174,10 +195,10 @@ export const AWSUsageHeatmap: React.FC<AWSUsageHeatmapProps> = ({
             </div>
 
             {/* Data rows */}
-            {industries.map((industry) => (
-              <div key={industry} className="grid grid-cols-6 gap-1 mb-1">
+            {industries.map((industry, industryIndex) => (
+              <div key={industry} className={`grid grid-cols-6 gap-2 mb-2 group hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-lg p-1 transition-colors`}>
                 {/* Industry name */}
-                <div className="text-xs font-medium text-gray-900 dark:text-gray-100 p-2 truncate">
+                <div className="text-xs font-medium text-gray-700 dark:text-gray-300 p-3 truncate">
                   {industry}
                 </div>
                 
@@ -192,15 +213,17 @@ export const AWSUsageHeatmap: React.FC<AWSUsageHeatmapProps> = ({
                     <div
                       key={`${industry}-${service.key}`}
                       className={`
-                        relative p-2 text-xs font-medium text-center rounded cursor-pointer
-                        transition-all duration-200 hover:scale-105 hover:shadow-md
+                        relative p-3 text-xs font-medium text-center rounded-md cursor-pointer
+                        transition-all duration-200 hover:shadow-sm border border-transparent
+                        hover:border-gray-200 dark:hover:border-gray-600
                         ${getTextColor(value)}
                       `}
                       style={{ backgroundColor: getColorIntensity(value) }}
                       title={`${industry} - ${service.name}: ${cell?.displayValue || '0%'}`}
-                      data-tooltip={`${industry} uses ${service.name} at ${cell?.displayValue || '0%'} capacity. Click for detailed breakdown.`}
                     >
-                      {cell?.displayValue || '0%'}
+                      <span className="group-hover:font-semibold transition-all">
+                        {cell?.displayValue || '0%'}
+                      </span>
                     </div>
                   );
                 })}

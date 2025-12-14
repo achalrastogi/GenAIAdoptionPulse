@@ -34,14 +34,14 @@ export const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 max-w-7xl mx-auto bg-background min-h-screen">
       {/* Header Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+      <div className="card-base p-8">
+        <h1 className="text-3xl font-semibold text-primary mb-3 tracking-tight">
           GenAI Adoption Pulse
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Real-time insights into generative AI adoption trends, AWS service usage patterns, and industry analytics.
+        <p className="text-lg text-secondary leading-relaxed">
+          Enterprise analytics for generative AI adoption trends, cloud infrastructure patterns, and strategic insights.
         </p>
       </div>
 
@@ -52,9 +52,9 @@ export const Dashboard: React.FC = () => {
       <FilterControls />
 
       {/* Main Dashboard Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
         {/* Left Column - Charts */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="xl:col-span-3 space-y-8">
           {/* GenAI Adoption Chart */}
           <GenAIAdoptionChart />
 
@@ -66,7 +66,7 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* Right Column - Insights */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Insights Composer */}
           <InsightsComposer />
 
@@ -76,7 +76,7 @@ export const Dashboard: React.FC = () => {
       </div>
 
       {/* Scenario Simulator */}
-      <div className="mt-6">
+      <div className="mt-8">
         <ScenarioSimulator />
       </div>
 
