@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from routers.data_routes import router as data_router
+from routers.kpi_routes import router as kpi_router
+from routers.insights_routes import router as insights_router
 from utils.error_handlers import (
     api_error_handler,
     http_exception_handler,
@@ -32,6 +34,8 @@ app.add_exception_handler(Exception, general_exception_handler)
 
 # Include routers
 app.include_router(data_router)
+app.include_router(kpi_router)
+app.include_router(insights_router)
 
 @app.get("/")
 async def root():

@@ -8,6 +8,8 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  Line,
+  ReferenceLine,
 } from 'recharts';
 import { useCorrelationData } from '../../hooks/useAPI';
 import { useFilters } from '../../contexts/FilterContext';
@@ -142,6 +144,33 @@ export const CorrelationPanel: React.FC<CorrelationPanelProps> = ({
   const correlationStrength = getCorrelationStrength(data.correlation_coefficient);
   const significanceLevel = getSignificanceLevel(data.statistical_significance);
 
+  // Calculate regression line points
+  const calculateRegressionLine = () => {
+    if (data.data_points.length < 2) return null;
+    
+    const xValues = data.data_points.map(p => p.genai_adoption);
+    const yValues = data.data_points.map(p => p.aws_usage_score);
+    
+    const n = xValues.length;
+    const sumX = xValues.reduce((a, b) => a + b, 0);
+    const sumY = yValues.reduce((a, b) => a + b, 0);
+    const sumXY = xValues.reduce((sum, x, i) => sum + x * yValues[i], 0);
+    const sumXX = xValues.reduce((sum, x) => sum + x * x, 0);
+    
+    const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+    
+    const minX = Math.min(...xValues);
+    const maxX = Math.max(...xValues);
+    
+    return {
+      start: { x: minX, y: slope * minX + intercept },
+      end: { x: maxX, y: slope * maxX + intercept }
+    };
+  };
+
+  const regressionLine = calculateRegressionLine();
+
   return (
     <Card 
       title="Correlation Analysis"
@@ -234,6 +263,19 @@ export const CorrelationPanel: React.FC<CorrelationPanelProps> = ({
                   />
                 ))}
               </Scatter>
+              
+              {/* Regression Line */}
+              {regressionLine && (
+                <ReferenceLine
+                  segment={[
+                    { x: regressionLine.start.x, y: regressionLine.start.y },
+                    { x: regressionLine.end.x, y: regressionLine.end.y }
+                  ]}
+                  stroke="#ef4444"
+                  strokeWidth={2}
+                  strokeDasharray="5 5"
+                />
+              )}
             </ScatterChart>
           </ResponsiveContainer>
         </div>
@@ -272,6 +314,37 @@ export const CorrelationPanel: React.FC<CorrelationPanelProps> = ({
             </div>
           </div>
         )}
+
+        {/* Export Controls */}
+        <div className="flex justify-end space-x-2 mb-4">
+          <button
+            onClick={() => {
+              console.log('Exporting correlation chart as PNG...');
+            }}
+            className="px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            📷 PNG
+          </button>
+          <button
+            onClick={() => {
+              const csvContent = "data:text/csv;charset=utf-8," + 
+                "Industry,Year,GenAI_Adoption,AWS_Usage_Score,Investment_Millions,Use_Cases_Count\n" +
+                data.data_points.map(point => 
+                  `${point.industry},${point.year},${point.genai_adoption},${point.aws_usage_score},${point.investment_millions},${point.use_cases_count}`
+                ).join('\n');
+              const encodedUri = encodeURI(csvContent);
+              const link = document.createElement("a");
+              link.setAttribute("href", encodedUri);
+              link.setAttribute("download", "correlation_analysis.csv");
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }}
+            className="px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            📊 CSV
+          </button>
+        </div>
 
         {/* Interpretation */}
         <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
