@@ -36,42 +36,22 @@ export const GenAIAdoptionChart: React.FC<GenAIAdoptionChartProps> = ({
 
   const chartData = data?.data || [];
 
-  // Custom tooltip component with refined styling
-  const CustomTooltip = ({ active, payload }: any) => {
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div style={{ 
-          backgroundColor: 'var(--color-surface-elevated)',
-          border: '1px solid var(--color-border)',
-          borderRadius: 'var(--radius-lg)',
-          padding: '1rem',
-          boxShadow: 'var(--shadow-lg)'
-        }}>
-          <p style={{ 
-            color: 'var(--color-text-primary)', 
-            fontWeight: 500, 
-            marginBottom: '0.5rem' 
-          }}>
-            {`${data.industry} (${data.year})`}
+        <div className="bg-white dark:bg-gray-800 p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg">
+          <p className="font-semibold text-gray-900 dark:text-white">{`${data.industry} (${data.year})`}</p>
+          <p className="text-blue-600 dark:text-blue-400">
+            {`Adoption Rate: ${(data.adoption_rate * 100).toFixed(1)}%`}
           </p>
-          <div style={{ fontSize: '0.875rem', lineHeight: '1.25rem' }}>
-            <p style={{ color: 'var(--color-text-secondary)', marginBottom: '0.25rem' }}>
-              Adoption Rate: <span style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}>
-                {(data.adoption_rate * 100).toFixed(1)}%
-              </span>
-            </p>
-            <p style={{ color: 'var(--color-text-secondary)', marginBottom: '0.25rem' }}>
-              Investment: <span style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}>
-                ${data.investment_millions}M
-              </span>
-            </p>
-            <p style={{ color: 'var(--color-text-secondary)' }}>
-              Use Cases: <span style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}>
-                {data.use_cases_count}
-              </span>
-            </p>
-          </div>
+          <p className="text-green-600 dark:text-green-400">
+            {`Investment: $${data.investment_millions}M`}
+          </p>
+          <p className="text-purple-600 dark:text-purple-400">
+            {`Use Cases: ${data.use_cases_count}`}
+          </p>
         </div>
       );
     }
@@ -81,25 +61,25 @@ export const GenAIAdoptionChart: React.FC<GenAIAdoptionChartProps> = ({
   // Format adoption rate as percentage
   const formatPercentage = (value: number) => `${(value * 100).toFixed(0)}%`;
 
-  // Enhanced chart toggle buttons with gradient styling
+  // Chart toggle buttons
   const ChartTypeToggle = () => (
-    <div className="flex space-x-1 mb-6 p-1 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg w-fit shadow-sm">
+    <div className="flex space-x-2 mb-4">
       <button
         onClick={() => setChartType('bar')}
-        className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+        className={`px-3 py-1 text-sm rounded-md transition-colors ${
           chartType === 'bar'
-            ? 'bg-gradient-to-r from-white to-gray-50 dark:from-gray-600 dark:to-gray-700 text-primary shadow-sm border border-accent-muted/20'
-            : 'text-secondary hover:text-primary hover:bg-white/50 dark:hover:bg-gray-600/50'
+            ? 'bg-blue-600 text-white'
+            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
         }`}
       >
         Bar Chart
       </button>
       <button
         onClick={() => setChartType('line')}
-        className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+        className={`px-3 py-1 text-sm rounded-md transition-colors ${
           chartType === 'line'
-            ? 'bg-gradient-to-r from-white to-gray-50 dark:from-gray-600 dark:to-gray-700 text-primary shadow-sm border border-accent-muted/20'
-            : 'text-secondary hover:text-primary hover:bg-white/50 dark:hover:bg-gray-600/50'
+            ? 'bg-blue-600 text-white'
+            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
         }`}
       >
         Line Chart
@@ -116,7 +96,7 @@ export const GenAIAdoptionChart: React.FC<GenAIAdoptionChartProps> = ({
         className={className}
       >
         <div className="flex items-center justify-center" style={{ height }}>
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
       </Card>
     );
@@ -133,11 +113,11 @@ export const GenAIAdoptionChart: React.FC<GenAIAdoptionChartProps> = ({
         <div className="flex flex-col items-center justify-center space-y-4" style={{ height }}>
           <div className="text-red-500 dark:text-red-400 text-center">
             <p className="font-medium">Failed to load adoption data</p>
-            <p className="text-sm mt-1 text-gray-600 dark:text-gray-400">{error}</p>
+            <p className="text-sm mt-1">{error}</p>
           </div>
           <button
             onClick={refetch}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors text-sm font-medium"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
           >
             Retry
           </button>
@@ -156,7 +136,7 @@ export const GenAIAdoptionChart: React.FC<GenAIAdoptionChartProps> = ({
       >
         <div className="flex flex-col items-center justify-center space-y-4" style={{ height }}>
           <div className="text-gray-500 dark:text-gray-400 text-center">
-            <div className="text-3xl mb-2 opacity-50">📊</div>
+            <div className="text-4xl mb-2">📊</div>
             <p className="font-medium">No adoption data found</p>
             <p className="text-sm mt-1">Try adjusting your filters</p>
           </div>
@@ -168,8 +148,7 @@ export const GenAIAdoptionChart: React.FC<GenAIAdoptionChartProps> = ({
   return (
     <Card 
       title="GenAI Adoption by Industry"
-      subtitle={`${chartData.length} records • ${chartType === 'bar' ? 'Bar' : 'Line'} view`}
-      variant="chart"
+      subtitle={`Showing ${chartData.length} records • ${chartType === 'bar' ? 'Bar' : 'Line'} view`}
       className={className}
     >
       <ChartTypeToggle />
@@ -177,16 +156,16 @@ export const GenAIAdoptionChart: React.FC<GenAIAdoptionChartProps> = ({
       <ResponsiveContainer width="100%" height={height}>
         {chartType === 'bar' ? (
           <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="2 2" stroke="var(--color-chart-grid)" opacity={0.3} />
+            <CartesianGrid strokeDasharray="1 1" stroke="var(--color-border-subtle)" opacity={0.5} />
             <XAxis 
               dataKey="industry" 
-              tick={{ fontSize: 11, fill: 'var(--color-chart-text)' }}
+              tick={{ fontSize: 11, fill: 'var(--color-text-tertiary)' }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis 
               tickFormatter={formatPercentage}
-              tick={{ fontSize: 11, fill: 'var(--color-chart-text)' }}
+              tick={{ fontSize: 11, fill: 'var(--color-text-tertiary)' }}
               axisLine={false}
               tickLine={false}
             />
@@ -195,22 +174,22 @@ export const GenAIAdoptionChart: React.FC<GenAIAdoptionChartProps> = ({
             <Bar 
               dataKey="adoption_rate" 
               name="Adoption Rate"
-              fill="var(--color-chart-accent)"
-              radius={[4, 4, 0, 0]}
+              fill="var(--color-chart-primary)"
+              radius={[2, 2, 0, 0]}
             />
           </BarChart>
         ) : (
           <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="2 2" stroke="var(--color-chart-grid)" opacity={0.3} />
+            <CartesianGrid strokeDasharray="1 1" stroke="var(--color-border-subtle)" opacity={0.5} />
             <XAxis 
               dataKey="year" 
-              tick={{ fontSize: 11, fill: 'var(--color-chart-text)' }}
+              tick={{ fontSize: 11, fill: 'var(--color-text-tertiary)' }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis 
               tickFormatter={formatPercentage}
-              tick={{ fontSize: 11, fill: 'var(--color-chart-text)' }}
+              tick={{ fontSize: 11, fill: 'var(--color-text-tertiary)' }}
               axisLine={false}
               tickLine={false}
             />
@@ -221,35 +200,35 @@ export const GenAIAdoptionChart: React.FC<GenAIAdoptionChartProps> = ({
               dataKey="adoption_rate" 
               name="Adoption Rate"
               stroke="var(--color-chart-accent)"
-              strokeWidth={3}
-              dot={{ fill: 'var(--color-chart-accent)', strokeWidth: 2, r: 4 }}
-              activeDot={{ r: 6, stroke: 'var(--color-chart-hover)', strokeWidth: 2, fill: 'var(--color-chart-hover)' }}
+              strokeWidth={2}
+              dot={{ fill: 'var(--color-chart-accent)', strokeWidth: 1, r: 3 }}
+              activeDot={{ r: 5, stroke: 'var(--color-chart-accent)', strokeWidth: 2 }}
             />
           </LineChart>
         )}
       </ResponsiveContainer>
 
-      {/* Enhanced summary stats with gradient styling */}
-      <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-accent-muted/20">
-        <div className="text-center p-4 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 border border-accent-muted/10">
-          <div className="text-2xl font-semibold text-primary mb-1">
+      {/* Summary stats */}
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="text-center">
+          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
             {chartData.length}
           </div>
-          <div className="text-sm text-secondary font-medium">Industries</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">Industries</div>
         </div>
-        <div className="text-center p-4 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 border border-accent-muted/10">
-          <div className="text-2xl font-semibold text-primary mb-1">
+        <div className="text-center">
+          <div className="text-2xl font-bold text-green-600 dark:text-green-400">
             {formatPercentage(
               chartData.reduce((sum, item) => sum + item.adoption_rate, 0) / chartData.length || 0
             )}
           </div>
-          <div className="text-sm text-secondary font-medium">Avg Adoption</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">Avg Adoption</div>
         </div>
-        <div className="text-center p-4 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 border border-accent-muted/10">
-          <div className="text-2xl font-semibold text-primary mb-1">
+        <div className="text-center">
+          <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
             ${Math.round(chartData.reduce((sum, item) => sum + item.investment_millions, 0))}M
           </div>
-          <div className="text-sm text-secondary font-medium">Total Investment</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">Total Investment</div>
         </div>
       </div>
     </Card>

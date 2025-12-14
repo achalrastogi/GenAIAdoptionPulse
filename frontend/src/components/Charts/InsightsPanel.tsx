@@ -97,7 +97,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
               data.key_findings.map((finding, index) => (
                 <div
                   key={index}
-                  className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-400"
+                  className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border-l-4 border-accent-primary shadow-sm"
                 >
                   <div className="flex items-start space-x-3">
                     <span className="text-blue-600 dark:text-blue-400 text-lg">
@@ -125,7 +125,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
               data.top_industries.map((industry, index) => (
                 <div
                   key={index}
-                  className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800"
+                  className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800 shadow-sm"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="font-medium text-green-900 dark:text-green-100">
@@ -173,7 +173,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
               data.growth_trends.map((trend, index) => (
                 <div
                   key={index}
-                  className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border-l-4 border-purple-400"
+                  className="p-4 bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 rounded-lg border-l-4 border-purple-400 shadow-sm"
                 >
                   <div className="flex items-start space-x-3">
                     <span className="text-purple-600 dark:text-purple-400 text-lg">
@@ -201,7 +201,7 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
               data.recommendations.map((recommendation, index) => (
                 <div
                   key={index}
-                  className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border-l-4 border-orange-400"
+                  className="p-4 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-lg border-l-4 border-orange-400 shadow-sm"
                 >
                   <div className="flex items-start space-x-3">
                     <span className="text-orange-600 dark:text-orange-400 text-lg">
@@ -226,8 +226,8 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
         return (
           <div className="space-y-4">
             {data.summary_statistics.genai && (
-              <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">
+              <div className="p-4 bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-700 dark:to-gray-600 rounded-lg shadow-sm border border-accent-muted/10">
+                <h4 className="font-medium text-primary mb-3">
                   GenAI Statistics
                 </h4>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
@@ -272,8 +272,8 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
             )}
 
             {data.summary_statistics.aws && (
-              <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">
+              <div className="p-4 bg-gradient-to-br from-slate-50 to-gray-50 dark:from-gray-600 dark:to-gray-700 rounded-lg shadow-sm border border-accent-muted/10">
+                <h4 className="font-medium text-primary mb-3">
                   AWS Usage Statistics
                 </h4>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
@@ -310,20 +310,21 @@ export const InsightsPanel: React.FC<InsightsPanelProps> = ({
     <Card 
       title="AI-Generated Insights"
       subtitle={`Analysis based on current filters • Generated ${new Date(data.metadata.generated_at).toLocaleDateString()}`}
+      variant="insights"
       className={className}
     >
       <div className="space-y-4">
-        {/* Tab Navigation */}
-        <div className="flex flex-wrap gap-1 p-1 bg-gray-100 dark:bg-gray-700 rounded-lg">
+        {/* Enhanced Tab Navigation */}
+        <div className="flex flex-wrap gap-1 p-1 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg shadow-inner">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`
-                flex items-center space-x-2 px-3 py-2 text-xs font-medium rounded-md transition-colors
+                flex items-center space-x-2 px-3 py-2 text-xs font-medium rounded-md transition-all duration-200
                 ${activeTab === tab.id
-                  ? 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                  ? 'bg-gradient-to-r from-white to-gray-50 dark:from-gray-600 dark:to-gray-700 text-primary shadow-sm border border-accent-muted/20'
+                  : 'text-secondary hover:text-primary hover:bg-white/50 dark:hover:bg-gray-600/50'
                 }
               `}
             >
